@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+</head>
+<body>
+  <div id="vis"/>
+  <script>
+    const spec = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Traffic Accident Trends (2023-2024)",
+    "subtitle": "Visualizing accident types and their frequencies over time",
+    "anchor": "start",
+    "color": "#2E3B4E",
+    "fontSize": 18,
+    "subtitleFontSize": 14
+  },
+  "data": {
+    "values": [
+      {"year_month": "2023-Mar", "accident_name": "بسيط", "count": 5059},
+      {"year_month": "2023-Mar", "accident_name": "بليغ", "count": 485},
+      {"year_month": "2023-Mar", "accident_name": "مخالفه", "count": 131},
+      {"year_month": "2023-Apr", "accident_name": "بسيط", "count": 5790},
+      {"year_month": "2023-Apr", "accident_name": "بليغ", "count": 616},
+      {"year_month": "2023-Apr", "accident_name": "مخالفه", "count": 246},
+      {"year_month": "2024-Mar", "accident_name": "بسيط", "count": 6238},
+      {"year_month": "2024-Mar", "accident_name": "بليغ", "count": 601},
+      {"year_month": "2024-Mar", "accident_name": "مخالفه", "count": 309},
+      {"year_month": "2024-Apr", "accident_name": "بسيط", "count": 3897},
+      {"year_month": "2024-Apr", "accident_name": "بليغ", "count": 343},
+      {"year_month": "2024-Apr", "accident_name": "مخالفه", "count": 192},
+      {"year_month": "2024-Jun", "accident_name": "بسيط", "count": 5224},
+      {"year_month": "2024-Jun", "accident_name": "بليغ", "count": 409},
+      {"year_month": "2024-Jun", "accident_name": "مخالفه", "count": 323},
+      {"year_month": "2024-Jul", "accident_name": "بسيط", "count": 7753},
+      {"year_month": "2024-Jul", "accident_name": "بليغ", "count": 625},
+      {"year_month": "2024-Jul", "accident_name": "مخالفه", "count": 515},
+      {"year_month": "2024-Aug", "accident_name": "بسيط", "count": 7938},
+      {"year_month": "2024-Aug", "accident_name": "بليغ", "count": 689},
+      {"year_month": "2024-Aug", "accident_name": "مخالفه", "count": 570},
+      {"year_month": "2024-Sep", "accident_name": "بسيط", "count": 560},
+      {"year_month": "2024-Sep", "accident_name": "بليغ", "count": 46},
+      {"year_month": "2024-Sep", "accident_name": "مخالفه", "count": 39}
+    ]
+  },
+  "params": [
+    {"name": "brush", "select": {"type": "interval", "encodings": ["x"]}}
+  ],
+  "vconcat": [
+    {
+      "title": "Accident Trends Over Time",
+      "width": 650,
+      "height": 300,
+      "mark": {"type": "area", "interpolate": "monotone", "opacity": 0.8},
+      "encoding": {
+        "x": {
+          "field": "year_month",
+          "type": "ordinal",
+          "title": "Month & Year",
+          "axis": {"labelAngle": -45, "labelFontSize": 12, "titleFontSize": 14}
+        },
+        "y": {
+          "aggregate": "sum",
+          "field": "count",
+          "type": "quantitative",
+          "title": "Incident Count",
+          "axis": {"titleFontSize": 14, "labelFontSize": 12}
+        },
+        "color": {
+          "field": "accident_name",
+          "type": "nominal",
+          "title": "Accident Type",
+          "scale": {
+            "domain": ["بسيط", "بليغ", "مخالفه"],
+            "range": ["#FF7F0E", "#D62728", "#FFCC00"]
+          },
+          "legend": {"orient": "top", "titleFontSize": 14, "labelFontSize": 12}
+        },
+        "tooltip": [
+          {
+            "field": "accident_name",
+            "type": "nominal",
+            "title": "Accident Type"
+          },
+          {"field": "count", "type": "quantitative", "title": "Count"},
+          {"field": "year_month", "type": "ordinal", "title": "Month & Year"}
+        ]
+      }
+    },
+    {
+      "hconcat": [
+        {
+          "title": "Total Incidents Over Time",
+          "width": 300,
+          "height": 150,
+          "mark": {"type": "line", "strokeWidth": 2, "color": "#FF7F0E"},
+          "encoding": {
+            "x": {
+              "field": "year_month",
+              "type": "ordinal",
+              "title": "Month & Year",
+              "axis": {"labelAngle": -45, "labelFontSize": 12}
+            },
+            "y": {
+              "aggregate": "sum",
+              "field": "count",
+              "type": "quantitative",
+              "title": "Total Incidents",
+              "axis": {"titleFontSize": 12}
+            }
+          },
+          "transform": [{"filter": {"param": "brush"}}]
+        },
+        {
+          "title": "Incidents by Type",
+          "width": 300,
+          "height": 150,
+          "mark": "bar",
+          "encoding": {
+            "x": {
+              "field": "accident_name",
+              "type": "nominal",
+              "title": "Accident Type",
+              "axis": {"labelAngle": -45, "labelFontSize": 12}
+            },
+            "y": {
+              "aggregate": "sum",
+              "field": "count",
+              "type": "quantitative",
+              "title": "Total Incidents",
+              "axis": {"titleFontSize": 12}
+            },
+            "color": {
+              "field": "accident_name",
+              "type": "nominal",
+              "legend": null
+            },
+            "tooltip": [
+              {
+                "field": "accident_name",
+                "type": "nominal",
+                "title": "Accident Type"
+              },
+              {"field": "count", "type": "quantitative", "title": "Count"}
+            ]
+          },
+          "transform": [{"filter": {"param": "brush"}}]
+        }
+      ]
+    }
+  ],
+  "config": {}
+};
+    vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(console.log).catch(console.warn);
+  </script>
+</body>
+</html>
